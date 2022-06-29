@@ -1,11 +1,15 @@
+###############################################################################
+#####Find contours from alternating images and plot pixels inside of decreasing size#########
+
+
 
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
 #Load in image
-image1 = cv2.imread(r'\.jpg')
-image2 = cv2.imread(r'\.jpg')
+image1 = cv2.imread(r'C:\Users\desti\Desktop\Iggy_1.jpg')
+image2 = cv2.imread(r'C:\Users\desti\Desktop\Happy_Buns.jpg')
 
 
 #Make image2 the same size as image 1, first get shape coordinates
@@ -62,4 +66,3 @@ for i, j in zip(contours1, contours2):
         j = j + 1
 
 plt.imshow(new_arr)
-
