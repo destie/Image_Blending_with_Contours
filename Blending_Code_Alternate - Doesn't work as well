@@ -1,0 +1,64 @@
+###############################################################################
+#####Find contours from alternating images and plot pixels inside of decreasing size#########
+
+
+
+
+
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+#Load in image
+image1 = cv2.imread(r'C:\Users\desti\Desktop\Iggy_1.jpg')
+image2 = cv2.imread(r'C:\Users\desti\Desktop\Happy_Buns.jpg')
+
+
+#Make image2 the same size as image 1, first get shape coordinates
+height, width, pixels = image1.shape
+#Resize image2 to be size of image1
+image2 = cv2.resize(image2, (width, height))
+
+
+#Convert to grayscale
+gray1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+gray2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
+
+#Find edges using canny edge detection
+edged1 = cv2.Canny(gray1, 30, 200)
+edged2 = cv2.Canny(gray2, 30, 200)
+
+#Find the contours of this image
+contours1, hierarchy1 = cv2.findContours(edged1, 
+    cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+contours2, hierarchy2 = cv2.findContours(edged2, 
+    cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+
+#Sort the contours
+contours1 = sorted(contours1, key=cv2.contourArea, reverse=True)
+contours2 = sorted(contours2, key=cv2.contourArea, reverse=True)
+
+#Set up blank image for use in generating filled contours
+blank_image = np.zeros(image1.shape, np.uint8)
+#Set up new_array to be canvas to draw new image on
+new_arr= image1
+
+##############################################################################
+#This randomly goes between contours:
+for i, j in zip(contours1, contours2):
+    #Fill the area to get pixels to translate to new image
+    filled1 = cv2.fillPoly(blank_image, i, (255,255,255))
+    filled2 = cv2.fillPoly(blank_image, j, (255,255,255))
+    
+    new_arr = np.where(filled1 > 0, image1, new_arr)
+    new_arr = np.where(filled2 > 0, image2, new_arr)
+    i = i + 1
+    j = j + 1
+
+    new_arr = np.where(filled2 > 0, image2, new_arr)
+    new_arr = np.where(filled1 > 0, image1, new_arr)
+    i = i + 1
+    j = j + 1
+
+plt.imshow(new_arr)
