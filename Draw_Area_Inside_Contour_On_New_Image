@@ -1,0 +1,36 @@
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+  
+#Load in image
+image = cv2.imread(r'\.jpg')
+
+#Convert to grayscale
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+#Find edges using canny edge detection
+edged = cv2.Canny(gray, 30, 200)
+
+#Find the contours of this image
+contours, hierarchy = cv2.findContours(edged, 
+    cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+#Find the maximum contour
+c = max(contours, key = cv2.contourArea)
+
+#Make a blank image to draw the largest contour
+blank_image = np.zeros(image.shape, np.uint8)
+
+#Draw the contour
+plt.imshow(cv2.drawContours(blank_image, c, -1, (255,255,255), -1))
+
+#Fill this contour 
+filled = cv2.fillPoly(blank_image, c, (255,255,255))
+plt.imshow(cv2.fillPoly(blank_image, c, (255,255,255)))
+
+#Take all pixels inside filled contour and draw them on new image
+#So here if filled (our filled contour) is > 0, take pixels from original image, and if not take pixels from blank_image
+new_arr = np.where(filled > 0, image, blank_image)
+
+#Show it
+plt.imshow(new_arr)
