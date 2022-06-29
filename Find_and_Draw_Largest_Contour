@@ -1,0 +1,27 @@
+############################PLAYING WITH CONTOURS##############################
+###############Find and draw largest contour on a new image####################
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+  
+#Load in image
+image = cv2.imread(r'C:\Users\desti\Desktop\Iggy_1.jpg')
+
+#Convert to grayscale
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+#Find edges using canny edge detection
+edged = cv2.Canny(gray, 30, 200)
+
+#Find the contours of this image
+contours, hierarchy = cv2.findContours(edged, 
+    cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+#Find the maximum contour
+c = max(contours, key = cv2.contourArea)
+
+#Make a blank image to draw the largest contour
+blank_image = np.zeros(image.shape, np.uint8)
+
+#Draw all of the contours
+plt.imshow(cv2.drawContours(blank_image, c, -1, (0, 255, 0), 3))
